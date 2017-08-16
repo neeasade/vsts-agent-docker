@@ -74,7 +74,7 @@ RUN echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet-release
  && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893 \
  && apt-get update \
  && apt-get install -y --no-install-recommends \
-    dotnet-dev-1.0.4 \
+    dotnet-dev-1.1.0 \
  && rm -rf /var/lib/apt/lists/*
 
 # Run dotnet command to populate initial cache
