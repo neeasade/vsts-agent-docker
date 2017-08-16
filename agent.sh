@@ -55,6 +55,10 @@ launch() {
     fi
 }
 
+pull() {
+    vdo docker pull $target
+}
+
 stop() {
     vdo docker stop $(get_running_id)
 }
