@@ -43,6 +43,8 @@ launch() {
         -v /var/vsts:/var/vsts \
         -d $target)"
 
+    pull
+
     if uname | grep MINGW; then
         # amend paths in git bash, ref: https://github.com/moby/moby/issues/12751
         # command="$(echo "$command" | sed 's|/|//|g')"

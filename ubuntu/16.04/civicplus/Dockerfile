@@ -1,5 +1,11 @@
 FROM microsoft/vsts-agent:ubuntu-16.04
 
+# Install runtime dependencies
+RUN apt-get update \
+ && apt-get install -y --no-install-recommends npm nodejs ca-certificates bzip2 libfontconfig \
+ && apt-get clean \
+ && rm -rf /var/lib/apt/lists/*
+
 ENV DOCKER_BUCKET get.docker.com
 ENV DOCKER_VERSION 17.05.0-ce
 ENV DOCKER_SHA256 340e0b5a009ba70e1b644136b94d13824db0aeb52e09071410f35a95d94316d9
@@ -28,3 +34,20 @@ RUN echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet-release
     dotnet-dev-1.1.0 \
  && rm -rf /var/lib/apt/lists/*
 
+ # Install official PhantomJS release
+RUN set -x  \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+ && mkdir /srv/var \
+ && mkdir /tmp/phantomjs \
+   # Download Phantom JS
+ && curl -L https://bitbucket.org/ariya/phantomjs/downloads/phantomjs-2.1.1-linux-x86_64.tar.bz2 | tar -xj --strip-components=1 -C /tmp/phantomjs \
+   # Copy binaries only
+ && mv /tmp/phantomjs/bin/phantomjs /usr/local/bin \
+   # Create symbol link
+   # Clean up
+ && apt-get autoremove -y \
+ && apt-get clean all \
+ && rm -rf /tmp/* /var/lib/apt/lists/*
+
+RUN phantomjs --version
