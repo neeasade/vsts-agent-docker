@@ -1,8 +1,33 @@
 FROM microsoft/vsts-agent:ubuntu-16.04
 
-# Install runtime dependencies
+# Install .NET Core SDK
+RUN echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet-release/ xenial main" > /etc/apt/sources.list.d/dotnetdev.list \
+ && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893 \
+ && apt-get update \
+ && apt-get install -y --no-install-recommends \
+    dotnet-dev-1.1.0
+
+# Install basic utilities and build tools
 RUN apt-get update \
- && apt-get install -y --no-install-recommends npm nodejs ca-certificates bzip2 libfontconfig \
+ && apt-get install -y --no-install-recommends \
+    ca-certificates \
+    bzip2 \
+    libfontconfig \
+    build-essential \
+    curl \
+    dnsutils \
+    file \
+    ftp \
+    iproute2 \
+    iputils-ping \
+    openssh-client \
+    sudo \
+    telnet \
+    time \
+    unzip \
+    wget \
+    zip \
+    tzdata \
  && apt-get clean \
  && rm -rf /var/lib/apt/lists/*
 
@@ -26,14 +51,6 @@ RUN set -x \
  && chmod +x /usr/local/bin/docker-compose \
  && docker-compose -v
 
-# Install .NET Core SDK
-RUN echo "deb [arch=amd64] http://apt-mo.trafficmanager.net/repos/dotnet-release/ xenial main" > /etc/apt/sources.list.d/dotnetdev.list \
- && apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 417A0893 \
- && apt-get update \
- && apt-get install -y --no-install-recommends \
-    dotnet-dev-1.1.0 \
- && rm -rf /var/lib/apt/lists/*
-
  # Install official PhantomJS release
 RUN set -x  \
  && apt-get update \
@@ -51,3 +68,13 @@ RUN set -x  \
  && rm -rf /tmp/* /var/lib/apt/lists/*
 
 RUN phantomjs --version
+
+# Install stable Node.js and related build tools
+RUN curl -sL https://git.io/n-install | bash -s -- -ny - \
+ && ~/n/bin/n stable \
+ && npm install -g bower grunt gulp n \
+ && rm -rf ~/n
+
+ENV bower=/usr/local/bin/bower \
+    dotnet=/usr/bin/dotnet \
+    grunt=/usr/local/bin/grunt
